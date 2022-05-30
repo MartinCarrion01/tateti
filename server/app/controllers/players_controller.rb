@@ -43,28 +43,6 @@ class PlayersController < ApplicationController
         end
     end
 
-    def match_create
-        @match = Match.new(player1: @player)
-        if @match.save
-            if @player.update(in_game: true)             
-                render(
-                    status: 200,
-                    json: {match: @match}
-                )
-            else
-                render(
-                    status: 400,
-                    json: {message: @player.errors.details}
-                )
-            end
-        else
-            render(
-                status: 400,
-                json: {message: @match.errors.details}
-            )
-        end
-    end
-
     private
     def player_params
         params.require(:player).permit(:username, :password)

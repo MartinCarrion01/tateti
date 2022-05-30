@@ -1,9 +1,8 @@
 class Match
     include Mongoid::Document
 
-    before_save :set_match_number
-
     field :match_number, type: Integer
+    field :is_active, type: Boolean, default: true
     field :player1_points, type: Integer
     field :player2_points, type: Integer
 
@@ -12,8 +11,4 @@ class Match
     belongs_to :player2, class_name: "Player", optional: true
 
     has_many :plays, autosave: true, dependent: :delete_all
-
-    def set_match_number
-        self.match_number = rand(1000..9999) 
-    end
 end

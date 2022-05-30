@@ -4,8 +4,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   resources :players, except: [:new, :edit]
+  resources :matches, except: [:new, :edit]
     
   #rutas orientadas a casos de uso
-  post '/players/:id/match/create', to: 'players#match_create'
   post '/players/login', to: 'players#login'
+  post '/matches/join/:match_number', to: 'matches#join'
 end
