@@ -1,7 +1,7 @@
 class MatchesController < ApplicationController
-    before_action :set_match, only: [:join, :start]
-    before_action :set_player, only: [:create, :join, :start]    
-    before_action :can_play?, only: [:start]    
+    before_action :set_match, only: [:join, :start, :make_move, :refresh]
+    before_action :set_player, only: [:create, :join, :start, :make_move, :refresh]    
+    before_action :can_play?, only: [:start, :make_move, :refresh]    
     before_action :is_playing?, only: [:create, :join]    
    
     def create
@@ -92,12 +92,100 @@ class MatchesController < ApplicationController
                 json: {message: "No puede realizar una jugada porque no es su turno"}
             )
         else
-           if @match.status == "juegap1"
-           #Hacer jugada de jugador 1
-           elsif @match.status == "juegap2" 
-           #Hacer jugada de jugador 2
-           end
+            if @match.status == "juegap1"
+            #Hacer jugada de jugador 1
+                if @match.plays[-1].player2_cells.include?(params[:celdamarcada])
+                    render(
+                        status: 400,
+                        json: {mensaje: "No puede marcar una celda marcada por el otro jugador"}
+                    )
+                else
+                    @match.plays[-1].player1_cells.push(params[:celdamarcada])
+                    @match.status = "juegap2"
+                    if @match.save
+                        render(
+                            status: 200,
+                            json: {match: @match}
+                        )
+                    else
+                        render(
+                            status: 400,
+                            json: {message: @match.errors.details}
+                        )
+                    end
+                end
+            elsif @match.status == "juegap2" 
+                #Hacer jugada de jugador 2
+                if @match.plays[-1].player1_cells.include?(params[:celdamarcada])
+                    render(
+                        status: 400,
+                        json: {mensaje: "No puede marcar una celda marcada por el otro jugador"}
+                    )
+                else
+                    @match.plays[-1].player2_cells.push(params[:celdamarcada])
+                    @match.status = "juegap1"
+                    if @match.save
+                        render(
+                            status: 200,
+                            json: {match: @match}
+                        )
+                    else
+                        render(
+                            status: 400,
+                            json: {message: @match.errors.details}
+                        )
+                    end
+                end
+            else
+                render(
+                    status: 400,
+                    json: {message: "Imposible realizar esta acción"}
+                )
+            end
         end
+    end
+
+    def refresh
+        if @match.player1 == @player
+            if @match.status == "juegap2"
+                render(
+                    status: 200,
+                    json: {match: nil}
+                )
+            elsif @match.status == "juegap1"
+                render(
+                    status: 200,
+                    json: {match: @match}
+                )
+            else
+                render(
+                    status: 400,
+                    json: {message: "Imposible realizar esta acción"}
+                )
+            end
+        elsif @match.player2 == @player 
+            if @match.status == "juegap1"
+                render(
+                    status: 200,
+                    json: {match: nil}
+                )
+            elsif @match.status == "juegap2"
+                render(
+                    status: 200,
+                    json: {match: @match}
+                )
+            else
+                render(
+                    status: 400,
+                    json: {message: "Imposible realizar esta acción"}
+                )
+            end
+        else
+            render(
+                status: 400,
+                json: {message: "Imposible realizar esta acción"}
+            )
+        end 
     end
 
     private

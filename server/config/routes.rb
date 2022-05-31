@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   post '/players/login', to: 'players#login'
   post '/matches/join/:match_number', to: 'matches#join'
   post '/matches/start/:match_number', to: 'matches#start'
+  post '/matches/makemove/:match_number', to: 'matches#make_move'
+  get '/matches/refresh/:match_number', to: 'matches#refresh'
 end
