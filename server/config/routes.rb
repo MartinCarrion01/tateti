@@ -9,4 +9,5 @@ Rails.application.routes.draw do
   #rutas orientadas a casos de uso
   post '/players/login', to: 'players#login'
   post '/matches/join/:match_number', to: 'matches#join'
+  post '/matches/start/:match_number', to: 'matches#start'
 end

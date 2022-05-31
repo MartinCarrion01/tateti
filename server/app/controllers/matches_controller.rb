@@ -1,6 +1,7 @@
 class MatchesController < ApplicationController
-    before_action :set_match, only: [:join]
-    before_action :set_player, only: [:create, :join]    
+    before_action :set_match, only: [:join, :start]
+    before_action :set_player, only: [:create, :join, :start]    
+    before_action :can_play?, only: [:start]    
     before_action :is_playing?, only: [:create, :join]    
    
     def create
@@ -53,6 +54,52 @@ class MatchesController < ApplicationController
         end
     end
 
+    def start 
+        if @match.player1 != @player
+           render(
+               status: 400,
+               json: {message: "Solo el creador de la partida puede comenzar un juego"}
+           ) 
+        else
+            if @match.player2.nil? 
+                render(
+                    status: 400,
+                    json: {message: "Falta un jugador para comenzar el partido"}
+                )
+            else
+                @play = Play.new(player1_cells: [], player2_cells: []) 
+                @match.plays.push(@play)
+                @match.status = "juegap1"
+                if @match.save
+                    render(
+                        status: 200,
+                        json: {match: @match}
+                    )
+                else
+                    render(
+                        status: 400,
+                        json: {message: @match.errors.details}
+                    )
+                end
+            end
+        end
+    end
+
+    def make_move
+        if (@match.status == "juegap1" && @match.player1 != @player) || (@match.status == "juegap2" && @match.player2 != @player)
+            render(
+                status: 400,
+                json: {message: "No puede realizar una jugada porque no es su turno"}
+            )
+        else
+           if @match.status == "juegap1"
+           #Hacer jugada de jugador 1
+           elsif @match.status == "juegap2" 
+           #Hacer jugada de jugador 2
+           end
+        end
+    end
+
     private
     
     def set_player
@@ -72,6 +119,16 @@ class MatchesController < ApplicationController
             render(
                 json: {message: "El partido solicitado no existe"},
                 status: 404
+            )
+            false
+        end
+    end
+
+    def can_play?
+        if @match.player1 != @player && @match.player2 != @player
+            render(
+                status: 400,
+                json: {message: "No puede realizar esta acción, ya que no le corresponde esta partida"}
             )
             false
         end
