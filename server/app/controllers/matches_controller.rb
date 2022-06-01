@@ -59,7 +59,8 @@ class MatchesController < ApplicationController
            render(
                status: 400,
                json: {message: "Solo el creador de la partida puede comenzar un juego"}
-           ) 
+           )
+            return 
         else
             if @match.player2.nil? 
                 render(
@@ -84,63 +85,59 @@ class MatchesController < ApplicationController
             end
         end
     end
-
+    
     def make_move
+        if (@match.status != "juegap1" || @match.status "juegap2")
+            render(
+                status: 400,
+                json: {mensaje: "No es posible realizar una jugada"}
+            )
+            return
+        end
         if (@match.status == "juegap1" && @match.player1 != @player) || (@match.status == "juegap2" && @match.player2 != @player)
             render(
                 status: 400,
                 json: {message: "No puede realizar una jugada porque no es su turno"}
             )
         else
-            if @match.status == "juegap1"
-            #Hacer jugada de jugador 1
-                if @match.plays[-1].player2_cells.include?(params[:celdamarcada])
-                    render(
-                        status: 400,
-                        json: {mensaje: "No puede marcar una celda marcada por el otro jugador"}
-                    )
-                else
-                    @match.plays[-1].player1_cells.push(params[:celdamarcada])
-                    @match.status = "juegap2"
-                    if @match.save
-                        render(
-                            status: 200,
-                            json: {match: @match}
-                        )
-                    else
-                        render(
-                            status: 400,
-                            json: {message: @match.errors.details}
-                        )
-                    end
-                end
-            elsif @match.status == "juegap2" 
-                #Hacer jugada de jugador 2
-                if @match.plays[-1].player1_cells.include?(params[:celdamarcada])
-                    render(
-                        status: 400,
-                        json: {mensaje: "No puede marcar una celda marcada por el otro jugador"}
-                    )
-                else
-                    @match.plays[-1].player2_cells.push(params[:celdamarcada])
-                    @match.status = "juegap1"
-                    if @match.save
-                        render(
-                            status: 200,
-                            json: {match: @match}
-                        )
-                    else
-                        render(
-                            status: 400,
-                            json: {message: @match.errors.details}
-                        )
-                    end
-                end
-            else
+            if @match.plays[-1].player1_cells.include?(params[:celdamarcada]) || @match.plays[-1].player2_cells.include?(params[:celdamarcada]) 
                 render(
                     status: 400,
-                    json: {message: "Imposible realizar esta acción"}
+                    json: {mensaje: "No puede marcar una celda que ya fue marcada"}
                 )
+                return
+            end
+            if @match.status == "juegap1"
+            #Hacer jugada de jugador 1
+                @match.plays[-1].player1_cells.push(params[:celdamarcada])
+                if @match.plays[-1].player1_cells.length >= 3 && did_player_win(@match.plays[-1].player1_cells)
+                    @match.plays[-1].is_active = false 
+                    @match.player1_points++
+                    @match.status = "ganap1"
+                else
+                    @match.status = "juegap2"
+                end
+            else 
+                #Hacer jugada de jugador 2
+                @match.plays[-1].player2_cells.push(params[:celdamarcada])
+                if @match.plays[-1].player2_cells.length >= 3 && did_player_win(@match.plays[-1].player2_cells)
+                    @match.plays[-1].is_active = false 
+                    @match.player2_points++
+                    @match.status = "ganap2"
+                else
+                    @match.status = "juegap1"
+                end
+            end
+            if @match.plays[-1].player1_cells.length + @match.plays[-1].player2_cells.length >= 8
+                @match.status = "empate"
+            end
+            if @match.save
+                render(
+                    status: 200,
+                    json: {match: @match}
+                )
+            else
+                render_match_errors
             end
         end
     end
@@ -152,40 +149,30 @@ class MatchesController < ApplicationController
                     status: 200,
                     json: {match: nil}
                 )
-            elsif @match.status == "juegap1"
-                render(
-                    status: 200,
-                    json: {match: @match}
-                )
-            else
-                render(
-                    status: 400,
-                    json: {message: "Imposible realizar esta acción"}
-                )
+                return
             end
-        elsif @match.player2 == @player 
+            @match.status == "juegap1"
+            render(
+                status: 200,
+                json: {match: @match}
+            )
+        else
             if @match.status == "juegap1"
                 render(
                     status: 200,
                     json: {match: nil}
                 )
-            elsif @match.status == "juegap2"
-                render(
-                    status: 200,
-                    json: {match: @match}
-                )
-            else
-                render(
-                    status: 400,
-                    json: {message: "Imposible realizar esta acción"}
-                )
+                return
             end
-        else
             render(
-                status: 400,
-                json: {message: "Imposible realizar esta acción"}
+                status: 200,
+                json: {match: @match}
             )
         end 
+    end
+
+    def vote
+        @match.status 
     end
 
     private
@@ -222,6 +209,20 @@ class MatchesController < ApplicationController
         end
     end
     
+    def render_match_errors
+        render(
+            status: 400,
+            json: {mensaje: @match.errors.details}
+        )    
+    end
+
+    def render_player_errors
+        render(
+            status: 400,
+            json: {mensaje: @player.errors.details}
+        )    
+    end
+
     def is_playing?
         if @player.in_game
             render(
@@ -232,6 +233,7 @@ class MatchesController < ApplicationController
         end
     end
 
+    #Metodos relacionados con la logica para determinar si un jugador ganó
     def did_player_win(array)
         #Para comprobar si hay una sucesión de 3 celdas cuyas filas son iguales
         rows = array.map {|a| a[0] }.sort.join
@@ -244,21 +246,18 @@ class MatchesController < ApplicationController
             return true
         end
         #Para comprobar si marco la diagonal principal
-        if array.select{|a| a[0] == a[2]}.sort == ["0-0", "1-1", "2-2"]
-            return true
+        if multiple_exist(array, ["0-0", "1-1", "2-2"]) 
+           return true 
         end
         #Para comprobar si las celdas marcadas contienen al array de las celdas contradiagonales
-        if multiple_exist(array, ["0-2", "1-1", "2-2"]) 
+        if multiple_exist(array, ["0-2", "1-1", "2-0"]) 
            return true 
         end
         return false
     end
 
     def match_three_consec?(str)
-        if str.match?(/[0-2]{3,}/) 
-            return true
-        end
-        return false
+        return str.match?(/[0-2]{3,}/) 
     end
 
     def multiple_exist (arr, values)
