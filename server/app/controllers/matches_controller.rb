@@ -231,4 +231,37 @@ class MatchesController < ApplicationController
             false
         end
     end
+
+    def did_player_win(array)
+        #Para comprobar si hay una sucesión de 3 celdas cuyas filas son iguales
+        rows = array.map {|a| a[0] }.sort.join
+        if match_three_consec?(rows)
+            return true
+        end
+        #Para comprobar si hay una sucesión de 3 celdas cuyas columnas son iguales
+        columns = array.map {|a| a[2] }.sort.join
+        if match_three_consec?(columns)
+            return true
+        end
+        #Para comprobar si marco la diagonal principal
+        if array.select{|a| a[0] == a[2]}.sort == ["0-0", "1-1", "2-2"]
+            return true
+        end
+        #Para comprobar si las celdas marcadas contienen al array de las celdas contradiagonales
+        if multiple_exist(array, ["0-2", "1-1", "2-2"]) 
+           return true 
+        end
+        return false
+    end
+
+    def match_three_consec?(str)
+        if str.match?(/[0-2]{3,}/) 
+            return true
+        end
+        return false
+    end
+
+    def multiple_exist (arr, values)
+        return values.all?{|a| arr.include? a}
+    end
 end
