@@ -13,16 +13,10 @@ class MatchesController < ApplicationController
                     json: {match: @match}
                 )
             else
-                render(
-                    status: 400,
-                    json: {message: @player.errors.details}
-                )
+                render_player_errors
             end
         else
-            render(
-                status: 400,
-                json: {message: @match.errors.details}
-            )
+            render_match_errors
         end
     end 
 
@@ -35,16 +29,10 @@ class MatchesController < ApplicationController
                         json: {match: @match}
                     )
                 else
-                    render(
-                        status: 400,
-                        json: {message: @player.errors.details}
-                    )
+                    render_player_errors
                 end
             else
-                render(
-                    status: 400,
-                    json: {message: @match.errors.details}
-                )
+                render_match_errors
             end
         else
             render(
@@ -68,8 +56,6 @@ class MatchesController < ApplicationController
                     json: {message: "Falta un jugador para comenzar el partido"}
                 )
             else
-                @play = Play.new(player1_cells: [], player2_cells: []) 
-                @match.plays.push(@play)
                 @match.status = "juegap1"
                 if @match.save
                     render(
@@ -77,10 +63,7 @@ class MatchesController < ApplicationController
                         json: {match: @match}
                     )
                 else
-                    render(
-                        status: 400,
-                        json: {message: @match.errors.details}
-                    )
+                    render_match_errors
                 end
             end
         end
@@ -100,7 +83,7 @@ class MatchesController < ApplicationController
                 json: {message: "No puede realizar una jugada porque no es su turno"}
             )
         else
-            if @match.plays[-1].player1_cells.include?(params[:celdamarcada]) || @match.plays[-1].player2_cells.include?(params[:celdamarcada]) 
+            if @match.player1_cells.include?(params[:celdamarcada]) || @match.player2_cells.include?(params[:celdamarcada]) 
                 render(
                     status: 400,
                     json: {mensaje: "No puede marcar una celda que ya fue marcada"}
@@ -109,27 +92,29 @@ class MatchesController < ApplicationController
             end
             if @match.status == "juegap1"
             #Hacer jugada de jugador 1
-                @match.plays[-1].player1_cells.push(params[:celdamarcada])
-                if @match.plays[-1].player1_cells.length >= 3 && did_player_win(@match.plays[-1].player1_cells)
-                    @match.plays[-1].is_active = false 
-                    @match.player1_points++
+                @match.player1_cells.push(params[:celdamarcada])
+                if @match.player1_cells.length >= 3 && did_player_win(@match.player1_cells)
+                    @match.winner = @player
                     @match.status = "ganap1"
+                    @match.is_active = false
                 else
                     @match.status = "juegap2"
                 end
             else 
                 #Hacer jugada de jugador 2
-                @match.plays[-1].player2_cells.push(params[:celdamarcada])
-                if @match.plays[-1].player2_cells.length >= 3 && did_player_win(@match.plays[-1].player2_cells)
-                    @match.plays[-1].is_active = false 
-                    @match.player2_points++
+                @match.player2_cells.push(params[:celdamarcada])
+                if @match.player2_cells.length >= 3 && did_player_win(@match.player2_cells)
+                    @match.winner = @player
                     @match.status = "ganap2"
+                    @match.is_active = false
                 else
                     @match.status = "juegap1"
                 end
             end
-            if @match.plays[-1].player1_cells.length + @match.plays[-1].player2_cells.length >= 8
+            if @match.player1_cells.length + @match.player2_cells.length >= 8
+                @match.winner = nil
                 @match.status = "empate"
+                @match.is_active = false
             end
             if @match.save
                 render(
@@ -171,18 +156,14 @@ class MatchesController < ApplicationController
         end 
     end
 
-    def vote
-        @match.status 
-    end
-
     private
     
     def set_player
         @player = Player.find(request.headers["Authorization"].split[1])
         if @player.nil?
             render(
-                json: {message: "El jugador solicitado no existe"},
-                status: 404
+                status: 404,
+                json: {message: "El jugador solicitado no existe"}
             )
             false
         end
@@ -192,8 +173,8 @@ class MatchesController < ApplicationController
         @match = Match.find_by(is_active: true, match_number: params[:match_number])
         if @match.nil?
             render(
-                json: {message: "El partido solicitado no existe"},
-                status: 404
+                status: 404,
+                json: {message: "El partido solicitado no existe"}
             )
             false
         end

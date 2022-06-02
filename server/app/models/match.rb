@@ -3,13 +3,11 @@ class Match
 
     field :match_number, type: Integer
     field :is_active, type: Boolean, default: true
-    field :player1_points, type: Integer, default: 0
-    field :player2_points, type: Integer, default: 0
     field :status, type: String, default: "esperando"
+    field :player1_cells, type: Array, default: []
+    field :player2_cells, type: Array, default: []
 
     belongs_to :winner, class_name: "Player", optional: true
     belongs_to :player1, class_name: "Player", optional: true
     belongs_to :player2, class_name: "Player", optional: true
-
-    has_many :plays, autosave: true, dependent: :delete_all
 end
