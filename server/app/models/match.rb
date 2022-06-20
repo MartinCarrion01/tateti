@@ -24,11 +24,7 @@ class Match
             self.status = "finalizado"
             self.is_active = false
         else
-           if self.play 
-           
-           elsif 
-           
-           end
+          puts "Hola"
         end
     end
 end

@@ -1,4 +1,4 @@
-import { Box, FormControl, FormErrorMessage, FormLabel, Input } from "@chakra-ui/react";
+import { Box, FormControl, FormLabel, Input } from "@chakra-ui/react";
 
 interface Props{
     label: string,
@@ -12,11 +12,10 @@ export default function InputText(props: Props){
 
     return(
         <>
-            <Box bg='white' w='75%' alignItems="center" mb="5">
-                <FormControl isInvalid={true}>
+            <Box bg='white' w='75%' alignItems="center" mb="5" p={4} borderColor="black" borderRadius={15}>
+                <FormControl>
                     <FormLabel>{props.label}</FormLabel>
                     <Input name={props.name} value={props.value} onChange={e => props.setValue(e.target.value)} type={props.password ? "password" : "text"}/>
-                    <FormErrorMessage>Error</FormErrorMessage>
                 </FormControl> 
             </Box>
         </>

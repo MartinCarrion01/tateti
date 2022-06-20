@@ -1,4 +1,4 @@
-import { Flex, Spacer } from "@chakra-ui/react";
+import HalfWidthCenter from "../common/components/HalfWidthCenter";
 import SubTitle from "../common/components/SubTitle";
 import LoginForm from "./LoginForm";
 
@@ -6,10 +6,10 @@ export default function Login(){
 
     return(
         <>
-            <Flex w={'50%'} direction="column" align="center">
+            <HalfWidthCenter color="#FAD4D4" >
                 <SubTitle text={"Iniciar sesión"}/>
                 <LoginForm/>
-            </Flex>
+            </HalfWidthCenter>
         </>
     )
 }

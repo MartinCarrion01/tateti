@@ -1,7 +1,7 @@
 class PlayersController < ApplicationController
     def create 
         @player = Player.new(player_params)
-        if player.save
+        if @player.save
             render(
                 status: 200,
                 json: {player: @player}
@@ -43,4 +43,3 @@ class PlayersController < ApplicationController
             status: 400
         )
     end
-end
