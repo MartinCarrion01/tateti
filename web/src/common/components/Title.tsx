@@ -7,7 +7,7 @@ interface Props {
 export default function Title(props: Props){
     return(
         <>
-            <Center color='#FFF2F2'>
+            <Center color='#EEEEEE'>
                 <Heading as='h1' size='4xl' noOfLines={1}>{props.title}</Heading>
             </Center>
         </>

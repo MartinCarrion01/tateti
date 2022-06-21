@@ -4,20 +4,20 @@ import { useNavigate } from "react-router-dom";
 import AlertMessage from "../common/components/AlertMessage";
 import Form from "../common/components/Form";
 import InputText from "../common/components/InputText";
-import { login } from "./userService";
+import { register } from "./userService";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      await login(username, password);
+      await register(username, password);
       navigate("/");
     } catch (error: any) {
-      setErrorMessage(error.response.data.message);
+      setErrorMessage(JSON.stringify(error.response.data.message));
     }
   };
 
@@ -46,10 +46,10 @@ export default function LoginForm() {
           />
           <Button
             colorScheme={"teal"}
-            onClick={handleLogin}
+            onClick={handleRegister}
             disabled={username === "" || password === ""}
           >
-            Ingresar
+            Registrarse
           </Button>
         </Flex>
       </Form>

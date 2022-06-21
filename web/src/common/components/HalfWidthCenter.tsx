@@ -7,7 +7,7 @@ interface Props{
 
 export default function HalfWidthCenter(props: Props){
     return(
-        <Box bg={props.color} w='50%' p={4} alignItems='center'>
+        <Box bg={props.color ? props.color : "#EEEEEE"} w='50%' p={4} alignItems='center'>
             {props.children}
         </Box>
     )
