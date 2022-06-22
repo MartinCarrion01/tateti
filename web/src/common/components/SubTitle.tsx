@@ -8,7 +8,7 @@ export default function SubTitle(props: Props){
     return(
         <>
             <Center color='#222831' mb={5}>
-                <Heading as='h3' noOfLines={1}>{props.text}</Heading>
+                <Heading as='h4' noOfLines={1}>{props.text}</Heading>
             </Center>
         </>
     )

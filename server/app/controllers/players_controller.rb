@@ -11,6 +11,13 @@ class PlayersController < ApplicationController
         end
     end
 
+    def show
+        render(
+            json: {player: @player},
+            status: 200
+        )
+    end
+
     def login
         player = Player.find_by(username: player_params[:username])
         if player.nil?
@@ -35,6 +42,17 @@ class PlayersController < ApplicationController
     private
     def player_params
         params.require(:player).permit(:username, :password)
+    end
+
+    def set_player
+        @player = Player.find_by(id: params[:id])
+        if @player.nil?
+            render(
+                json: {message: "El jugador solicitado no existe"},
+                status: 404
+            )
+            false
+        end
     end
 
     def render_errors_response

@@ -12,7 +12,7 @@ export default function InputText(props: Props){
 
     return(
         <>
-            <Box bg='white' w='75%' alignItems="center" mb="5" p={4} borderColor="black" borderRadius={15}>
+            <Box bg='white' w='100%' alignItems="center" mb="5" p={4} borderColor="black" borderRadius={15}>
                 <FormControl>
                     <FormLabel>{props.label}</FormLabel>
                     <Input name={props.name} value={props.value} onChange={e => props.setValue(e.target.value)} type={props.password ? "password" : "text"}/>

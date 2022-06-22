@@ -22,7 +22,7 @@ class MatchesController < ApplicationController
 
     def join
         if @match.player2.nil?
-            if @match.update(player2: @player)
+            if @match.update(player2: @player, status: "juegap1")
                 if @player.update(in_game: true)             
                     render(
                         status: 200,
@@ -111,13 +111,20 @@ class MatchesController < ApplicationController
     private
     
     def set_player
+        if request.headers["Authorization"].nil?
+            render(
+                status: 400,
+                json: {message: "Debe logearse para realizar esta acción"}
+            )
+            return false
+        end
         @player = Player.find_by(id: request.headers["Authorization"].split[1])
         if @player.nil?
             render(
                 status: 404,
                 json: {message: "El jugador solicitado no existe"}
             )
-            false
+            return false
         end
     end
 

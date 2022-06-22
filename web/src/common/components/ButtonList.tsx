@@ -7,6 +7,7 @@ export interface ButtonFormat {
 
 interface Props {
   buttonList: ButtonFormat[];
+  disabled: boolean;
 }
 
 export default function ButtonList(props: Props) {
@@ -20,6 +21,7 @@ export default function ButtonList(props: Props) {
               size="lg"
               key={index}
               onClick={button.handler}
+              disabled={props.disabled}
             >
               {button.label}
             </Button>

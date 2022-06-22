@@ -24,6 +24,6 @@ export function setUser(player: Player) {
 }
 
 export function cleanupUser() {
-    currentUser = undefined
-    userSubject.next(currentUser)
-  }
+  currentUser = undefined;
+  userSubject.next(currentUser);
+}

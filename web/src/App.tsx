@@ -7,6 +7,8 @@ import { Flex } from "@chakra-ui/react";
 import HalfWidthCenter from "./common/components/HalfWidthCenter";
 import Title from "./common/components/Title";
 import Register from "./pages/Register";
+import Match from "./pages/Match";
+import JoinMatch from "./pages/JoinMatch";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path={"/"} element={<Menu />} />
         <Route path={"/login"} element={<Login />} />
         <Route path={"/register"} element={<Register />} />
+        <Route path={"/match/:id"} element={<Match />} />
+        <Route path={"/join_match"} element={<JoinMatch />} />
       </Routes>
     </Flex>
   );

@@ -24,34 +24,32 @@ export default function LoginForm() {
   return (
     <>
       <Form>
-        <Flex direction="column" align="center" justify="center" w="100%">
-          {errorMessage ? (
-            <AlertMessage status="error" description={errorMessage} />
-          ) : (
-            ""
-          )}
-          <InputText
-            label={"Nombre de usuario"}
-            name={"username"}
-            value={username}
-            setValue={setUsername}
-            password={false}
-          />
-          <InputText
-            label={"Contraseña"}
-            name={"password"}
-            value={password}
-            setValue={setPassword}
-            password={true}
-          />
-          <Button
-            colorScheme={"teal"}
-            onClick={handleLogin}
-            disabled={username === "" || password === ""}
-          >
-            Ingresar
-          </Button>
-        </Flex>
+        {errorMessage ? (
+          <AlertMessage status="error" description={errorMessage} />
+        ) : (
+          <></>
+        )}
+        <InputText
+          label={"Nombre de usuario"}
+          name={"username"}
+          value={username}
+          setValue={setUsername}
+          password={false}
+        />
+        <InputText
+          label={"Contraseña"}
+          name={"password"}
+          value={password}
+          setValue={setPassword}
+          password={true}
+        />
+        <Button
+          colorScheme={"teal"}
+          onClick={handleLogin}
+          disabled={username === "" || password === ""}
+        >
+          Ingresar
+        </Button>
       </Form>
     </>
   );
