@@ -11,7 +11,7 @@ class Match
     belongs_to :player1, class_name: "Player"
     belongs_to :player2, class_name: "Player", optional: true
 
-    def make_move(match)
+    def make_move(player, cell)
         cells = if self.player1 == player
                     self.player1_cells.push(cell)
                     self.player1_cells
@@ -26,5 +26,14 @@ class Match
         else
           puts "Hola"
         end
+    end
+
+    def did_player_win(cells)
+        WINNER_COMBINATIONS = [["0", "1", "2"], ["3", "4", "5"], ["6", "7", "8"],
+                               ["0", "3", "6"], ["1", "4", "7"], ["2", "5", "8"],
+                               ["0", "4", "8"], ["2", "4", "6"]]
+        result = WINNER_COMBINATIONS.each do |combination|
+                    break if combination.all?{|a| cells.include?}
+                 end
     end
 end

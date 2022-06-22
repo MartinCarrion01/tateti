@@ -71,26 +71,7 @@ class MatchesController < ApplicationController
     end
 
     def make_move
-        if foo
-            @match.player1_cells.push(params[:celdamarcada])
-            if @match.player1_cells.length >= 3 && did_player_win(@match.player1_cells)
-                @match.winner = @player
-                @match.status = "ganap1"
-                @match.is_active = false
-            else
-                @match.status = "juegap2"
-            end
-        else 
-            #Hacer jugada de jugador 2
-            @match.player2_cells.push(params[:celdamarcada])
-            if @match.player2_cells.length >= 3 && did_player_win(@match.player2_cells)
-                @match.winner = @player
-                @match.status = "ganap2"
-                @match.is_active = false
-            else
-                @match.status = "juegap1"
-            end
-        end
+        @match.make_move(@player, params[:celdamarcada])
         if @match.player1_cells.length + @match.player2_cells.length >= 8
             @match.winner = nil
             @match.status = "empate"
@@ -112,7 +93,7 @@ class MatchesController < ApplicationController
         if request.headers["Authorization"].nil?
             render(
                 status: 400,
-                json: {message: "Debe logearse para realizar esta acción"}
+                json: {message: "Debe poseer un token válido para realizar esta acción"}
             )
             return false
         end
@@ -192,14 +173,3 @@ class MatchesController < ApplicationController
         end
     end
 end
-        
-   
-     
-
-    
-
-    
-
-    
-
-    
