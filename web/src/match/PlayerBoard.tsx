@@ -9,21 +9,34 @@ import PlayerBox from "./Player";
 export default function PlayerBoard() {
   const user = useSessionUser();
   const match = useCurrentMatch();
-  const [otherPlayer, setOtherPlayer] = useState<Player | undefined>(undefined);
+  const [otherPlayer, setOtherPlayer] = useState<string>("");
 
   useEffect(() => {
     const getPlayer = async () => {
-      if (match) {
-        if (match.player2_id) {
-          const response = await getOtherPlayer(
-            match.player1_id?.$oid as string
-          );
-          setOtherPlayer(response.data["player"] as Player);
+      if (match && user) {
+        if (user._id.$oid === match.player1_id.$oid) {
+          if (match.player2_id) {
+            const response = await getOtherPlayer(
+              match.player2_id?.$oid as string
+            );
+            setOtherPlayer((response.data["player"] as Player).username);
+          } else {
+            setOtherPlayer("Esperando jugador");
+          }
+        } else {
+          if (match.player2_id) {
+            console.log(match);
+            const response = await getOtherPlayer(match.player1_id.$oid);
+            console.log("else if", response);
+            setOtherPlayer((response.data["player"] as Player).username);
+          }
         }
       }
     };
     getPlayer();
-  }, [match]);
+  }, [match, user]);
+
+  console.log(otherPlayer, user?.username, match?.player1_id);
 
   return (
     <Flex
@@ -32,18 +45,16 @@ export default function PlayerBoard() {
       width="100%"
       textAlign="center"
     >
-      {user && match && otherPlayer ? (
+      {user && match ? (
         <>
           <PlayerBox
             player_name={
               user._id.$oid === match.player1_id.$oid
                 ? user.username
-                : otherPlayer.username
+                : otherPlayer
             }
           />
-          <PlayerBox
-            player_name={match.player2_id.$oid ? "Esperando" : "hola"}
-          />
+          <PlayerBox player_name={otherPlayer} />
         </>
       ) : (
         <></>

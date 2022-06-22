@@ -1,4 +1,5 @@
 class PlayersController < ApplicationController
+    before_action :set_player, only: :show
     def create 
         @player = Player.new(player_params)
         if @player.save

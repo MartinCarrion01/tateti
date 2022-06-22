@@ -13,10 +13,8 @@ Rails.application.routes.draw do
     member do
       put :join
       patch :join
-      put :start
-      patch :start
-      patch :make_move
       put :make_move
+      patch :make_move
       get :refresh
     end
   end

@@ -47,8 +47,21 @@ export async function joinMatch(match_number: number) {
 
 export async function getOtherPlayer(player_id: string) {
   const response: AxiosResponse = await axios.get(
-    `${environment.server_url}/player/${player_id}`
+    `${environment.server_url}/players/${player_id}`
   );
 
   return response;
+}
+
+export async function updateMatch(match_number: Number){
+  const response: AxiosResponse = await axios.get(
+    `${environment.server_url}/matches/${match_number}/refresh`
+  );
+
+  if (response.data["match"]) {
+    const match = response.data["match"] as Match;
+    setMatch(match);
+  }
+
+  return response.data["refresh"];
 }
