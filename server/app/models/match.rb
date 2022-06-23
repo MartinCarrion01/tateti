@@ -8,8 +8,8 @@ class Match
     field :player2_cells, type: Array, default: []
 
     belongs_to :winner, class_name: "Player", optional: true
-    belongs_to :player1, class_name: "Player"
-    belongs_to :player2, class_name: "Player", optional: true
+    belongs_to :player1, class_name: "Player", autosave: true
+    belongs_to :player2, class_name: "Player", optional: true, autosave: true
 
     def make_move(player, cell)
         cells = if self.player1 == player
@@ -23,17 +23,35 @@ class Match
             self.winner = player
             self.status = "finalizado"
             self.is_active = false
+            self.player1.in_game = false
+            self.player2.in_game = false
         else
-          puts "Hola"
+            if self.player1_cells.length + self.player1_cells.length >= 9
+                self.status = "empatado"
+                self.is_active = false
+                self.player1.in_game = false
+                self.player2.in_game = false
+                return
+            end
+            if self.player1 == player
+                self.status = "juegap2"
+            elsif self.player2 == player
+                self.status = "juegap1"
+            end
         end
     end
 
     def did_player_win(cells)
-        WINNER_COMBINATIONS = [["0", "1", "2"], ["3", "4", "5"], ["6", "7", "8"],
+        winner_combinations = [["0", "1", "2"], ["3", "4", "5"], ["6", "7", "8"],
                                ["0", "3", "6"], ["1", "4", "7"], ["2", "5", "8"],
                                ["0", "4", "8"], ["2", "4", "6"]]
-        result = WINNER_COMBINATIONS.each do |combination|
-                    break if combination.all?{|a| cells.include?}
-                 end
+        flag = false
+        winner_combinations.each do |combination|
+            if combination.all?{|a| cells.include? a}
+                flag = true
+                break
+            end
+        end
+        return flag
     end
 end

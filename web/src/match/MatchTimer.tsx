@@ -3,7 +3,7 @@ import { useCurrentMatch } from "../store/matchStore";
 import { updateMatch } from "./matchService";
 
 interface Props {
-  setter: React.Dispatch<React.SetStateAction<Boolean>>;
+  setter: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export default function MatchTimer(props: Props) {
   const match = useCurrentMatch();
@@ -17,12 +17,11 @@ export default function MatchTimer(props: Props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log("llamando");
       update();
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  });
 
   return <></>;
 }

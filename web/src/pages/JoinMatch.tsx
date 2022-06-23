@@ -9,8 +9,8 @@ export default function JoinMatch() {
       <HalfWidthCenter>
         <SubTitle text={"Unirse a una partida"} />
         <Text fontSize="medium" textAlign="center" mb="5">
-          Para unirse a una partida, escriba el numero (de 4 digitos) de la partida a la que
-          desea unirse
+          Para unirse a una partida, escribí el numero (de 6 dígitos) de la partida a la que
+          deseas unirte
         </Text>
         <JoinMatchForm />
       </HalfWidthCenter>

@@ -5,7 +5,7 @@ class MatchesController < ApplicationController
     before_action :is_playing?, only: [:create, :join]
 
     def create
-        @match = Match.new(player1: @player, match_number: rand(1000..9999))
+        @match = Match.new(player1: @player, match_number: rand(100000..999999))
         if @match.save
             if @player.update(in_game: true)             
                 render(
@@ -72,15 +72,10 @@ class MatchesController < ApplicationController
 
     def make_move
         @match.make_move(@player, params[:celdamarcada])
-        if @match.player1_cells.length + @match.player2_cells.length >= 8
-            @match.winner = nil
-            @match.status = "empate"
-            @match.is_active = false
-        end
         if @match.save
             render(
-                status: 200,
-                json: {match: @match}
+                status: 204,
+                json: {message: ""}
             )
         else
             render_match_errors
@@ -108,7 +103,7 @@ class MatchesController < ApplicationController
     end
 
     def set_match
-        @match = Match.find_by(is_active: true, match_number: params[:id])
+        @match = Match.find_by(match_number: params[:id])
         if @match.nil?
             render(
                 status: 404,
@@ -119,7 +114,7 @@ class MatchesController < ApplicationController
     end
 
     def can_play?
-        if (@match.status != "juegap1" || @match.status != "juegap2")
+        if (@match.status != "juegap1" && @match.status != "juegap2")
             render(
                 status: 400,
                 json: {mensaje: "No es posible realizar una jugada"}

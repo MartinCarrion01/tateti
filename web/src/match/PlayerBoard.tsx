@@ -44,6 +44,7 @@ export default function PlayerBoard() {
       justify="space-between"
       width="100%"
       textAlign="center"
+      my="2"
     >
       {user && match ? (
         <>

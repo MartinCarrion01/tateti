@@ -1,4 +1,3 @@
-import { Player } from "./../user/userService";
 import axios, { AxiosResponse } from "axios";
 import { setMatch } from "../store/matchStore";
 import { environment } from "../utils/environment";
@@ -13,7 +12,7 @@ export interface Match {
   player1_id: {
     $oid: string;
   };
-  player2_cells: [];
+  player2_cells: string[];
   player2_id: null | {
     $oid: string;
   };
@@ -53,7 +52,7 @@ export async function getOtherPlayer(player_id: string) {
   return response;
 }
 
-export async function updateMatch(match_number: Number){
+export async function updateMatch(match_number: Number) {
   const response: AxiosResponse = await axios.get(
     `${environment.server_url}/matches/${match_number}/refresh`
   );
@@ -64,4 +63,13 @@ export async function updateMatch(match_number: Number){
   }
 
   return response.data["refresh"];
+}
+
+export async function makeMove(match_number: Number, markedCell: String) {
+  const response: AxiosResponse = await axios.put(
+    `${environment.server_url}/matches/${match_number}/make_move`,
+    { celdamarcada: markedCell }
+  );
+
+  return response
 }

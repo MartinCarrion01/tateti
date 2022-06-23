@@ -6,7 +6,7 @@ import Form from "../common/components/Form";
 import InputText from "../common/components/InputText";
 import { joinMatch, Match } from "../match/matchService";
 
-const numberRegex = /([0-9]{4})+/
+const numberRegex = /([0-9]{6})+/
 
 export default function JoinMatchForm() {
   const [matchNumber, setMatchNumber] = useState<string>("");
@@ -38,7 +38,7 @@ export default function JoinMatchForm() {
       <Button
         colorScheme={"teal"}
         onClick={handleJoin}
-        disabled={matchNumber.length !== 4 || !numberRegex.test(matchNumber)}
+        disabled={matchNumber.length !== 6 || !numberRegex.test(matchNumber)}
       >
         Unirse
       </Button>

@@ -1,4 +1,4 @@
-import { Box, Center } from "@chakra-ui/react";
+import {Center } from "@chakra-ui/react";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
