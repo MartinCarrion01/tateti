@@ -212,7 +212,7 @@ HTTP/1.1 404 Not Found
 }
 ```
 
-## <a name='partido-activo'></a> Muestra partido activo del jugador
+## <a name='partido-activo'></a> Mostrar partido activo del jugador
 [Back to top](#top)
 
 <p>Muestra el partido en el que el jugador requerido está jugando actualmente</p>
@@ -357,15 +357,6 @@ HTTP/1.1 400 Bad Request
 HTTP/1.1 400 Bad Request
 {
   "message": {
-    "No puede realizar esta acción, ya que se encuentra en partida actualmente"
-  }
-}
-```
-
-```
-HTTP/1.1 400 Bad Request
-{
-  "message": {
     "{Nombre de la propiedad}": [
       {
         "error": "{Motivo de error"},
@@ -466,15 +457,6 @@ HTTP/1.1 400 Bad Request
 HTTP/1.1 400 Bad Request
 {
   "message": {
-    "No puede realizar esta acción, ya que se encuentra en partida actualmente"
-  }
-}
-```
-
-```
-HTTP/1.1 400 Bad Request
-{
-  "message": {
     "El partido al cual se desea unir esta lleno"
   }
 }
@@ -500,7 +482,7 @@ HTTP/1.1 400 Bad Request
 ## <a name='refrescar-partido'></a> Refrescar partido
 [Back to top](#top)
 
-<p>Obtenemos el estado actual del partido si el otro jugador ya realizó un movimiento y ya es nuestro turno, además que recibimos una flag que nos dice si tenemos que seguir refrescando o no. Devolvemos nulo cuando no es nuestro turno ya que tenemos que espera que el otro jugador cambie la partida para que devolvamos el partido. También consideramos el caso de cuando termina la partida, ahí devolvemos el partido terminado y un flag diciendo que no refresque más</p>
+<p>Obtenemos el estado actual del partido si el otro jugador ya realizó un movimiento y ya es nuestro turno, además que recibimos una flag que nos dice si tenemos que seguir refrescando o no. Devolvemos nulo cuando no es nuestro turno ya que tenemos que esperar que el otro jugador cambie la partida para que devolvamos el partido. También consideramos el caso de cuando termina la partida, ahí devolvemos el partido terminado y un flag diciendo que no refresque más</p>
 
 	GET /matches/:id/refresh
 
@@ -549,6 +531,7 @@ HTTP/1.1 200 OK
   "refresh": false
 }
 ```
+Por ej: Si el partido ya terminó, devolvemos el estado final del partido, mas un flag indicando que hay que dejar de refrescar 
 
 ```
 HTTP/1.1 200 OK
@@ -620,7 +603,7 @@ HTTP/1.1 400 Bad Request
 ## <a name='hacer-jugada'></a> Hacer jugada
 [Back to top](#top)
 
-<p>Si es nuestro turno, podemos hacer una jugada, enviando la celda que queremos marcar</p>
+<p>Si es nuestro turno, podemos hacer una jugada, enviando la celda que queremos marcar. El formato de la celda tiene que ser un solo caracter cuyo único valor posible tiene que estar contenido en el conjunto de numeros del 0 al 8</p>
 
 	PUT /matches/:id/make_move | PATCH /matches/:id/make_move
 
