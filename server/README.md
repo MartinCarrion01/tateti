@@ -500,8 +500,7 @@ HTTP/1.1 400 Bad Request
 ## <a name='refrescar-partido'></a> Refrescar partido
 [Back to top](#top)
 
-<p>Obtenemos el estado actual del partido si el otro jugador ya realizó un movimiento y ya es nuestro turno, además que recibimos una flag que nos dice si tenemos que seguir refrescando o no. Si es nuestro turno y aún no hacemos ninguna jugada, como no hay ningun cambio en el partido, devolvemos nulo.
-También consideramos el caso de cuando termina la partida, ahí devolvemos el partido terminado y un flag diciendo que no refresque más</p>
+<p>Obtenemos el estado actual del partido si el otro jugador ya realizó un movimiento y ya es nuestro turno, además que recibimos una flag que nos dice si tenemos que seguir refrescando o no. Devolvemos nulo cuando no es nuestro turno ya que tenemos que espera que el otro jugador cambie la partida para que devolvamos el partido. También consideramos el caso de cuando termina la partida, ahí devolvemos el partido terminado y un flag diciendo que no refresque más</p>
 
 	GET /matches/:id/refresh
 
