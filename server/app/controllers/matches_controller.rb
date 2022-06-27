@@ -21,6 +21,13 @@ class MatchesController < ApplicationController
     end
 
     def refresh
+        if @match.player1 != @player && @match.player2 != @player
+            render(
+                status: 400,
+                json: {message: "No puede realizar esta acción, ya que no le corresponde esta partida"}
+            )
+            return
+        end
         if @match.status == "finalizado"
             render(
                 status: 200,
@@ -168,10 +175,17 @@ class MatchesController < ApplicationController
             )
             return false
         end
+        if (!params[:celdamarcada].match?(/[0-8]{1}/))
+            render(
+                status: 400,
+                json: {message: "Formato de celda inválido, debe ser solo un caracter que sea un numero entre el 0 y el 8"}
+            )
+            return false
+        end
         if @match.player1_cells.include?(params[:celdamarcada]) || @match.player2_cells.include?(params[:celdamarcada]) 
             render(
                 status: 400,
-                json: {mensaje: "No puede marcar una celda que ya fue marcada"}
+                json: {message: "No puede marcar una celda que ya fue marcada"}
             )
             return false
         end
