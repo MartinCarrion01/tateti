@@ -1,20 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AlertMessage from "../common/components/AlertMessage";
-import ButtonList from "../common/components/ButtonList";
-import HalfWidthCenter from "../common/components/HalfWidthCenter";
-import { Match, createMatch } from "../match/matchService";
+import AlertMessage from "../components/common/AlertMessage";
+import ButtonList, { ButtonFormat } from "../components/menu/ButtonList";
+import HalfWidthCenter from "../components/common/HalfWidthCenter";
+import { Match, createMatch, getMatchByPlayer } from "../services/matchService";
 import { cleanupToken, useSessionToken } from "../store/tokenStore";
 import { cleanupUser, useSessionUser } from "../store/userStore";
 
 export default function Menu(props: any) {
   const user = useSessionUser();
-  const token = useSessionToken();
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [disabled, setDisabled] = React.useState<boolean>(false);
+  const token = useSessionToken();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  
+  useEffect(() => {
     if (!user || !token) {
       navigate("/login");
     }
@@ -36,6 +37,30 @@ export default function Menu(props: any) {
     }
   };
 
+  const returnToMatchHandler = async () => {
+    setDisabled(true);
+    try {
+      const response = await getMatchByPlayer(user?._id.$oid as string);
+      navigate(`/match/${(response.data["match"] as Match).match_number}`);
+    } catch (error: any) {
+      setDisabled(false);
+      setErrorMessage(JSON.stringify(error.response.data.message));
+    }
+  }
+
+  const defaultButtons: ButtonFormat[] = [
+    { label: "Iniciar partida", handler: () => createMatchHandler() },
+    {
+      label: "Unirse a partida",
+      handler: () => navigate("/join_match"),
+    },
+    { label: "Cerrar sesión", handler: () => logoutHandler() },
+  ];
+
+  const returnToMatch: ButtonFormat[] = [
+    { label: "Volver a la partida", handler: () => returnToMatchHandler() },
+  ];
+
   return (
     <>
       <HalfWidthCenter>
@@ -45,14 +70,13 @@ export default function Menu(props: any) {
           <></>
         )}
         <ButtonList
-          buttonList={[
-            { label: "Iniciar partida", handler: () => createMatchHandler() },
-            {
-              label: "Unirse a partida",
-              handler: () => navigate("/join_match"),
-            },
-            { label: "Cerrar sesión", handler: () => logoutHandler() },
-          ]}
+          buttonList={
+            user?.in_game
+              ? returnToMatch.concat(
+                  defaultButtons.filter((e) => e.label === "Cerrar sesión")
+                )
+              : defaultButtons
+          }
           disabled={disabled}
         />
       </HalfWidthCenter>

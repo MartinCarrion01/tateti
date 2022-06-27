@@ -1,15 +1,15 @@
-import React from "react";
+import { useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs";
-import { Match } from "../match/matchService";
+import { Match } from "../services/matchService";
 
 let currentMatch: Match | undefined;
 
 const matchSubject = new Subject<Match | undefined>();
 
 export function useCurrentMatch() {
-  const [match, setMatch] = React.useState(currentMatch);
+  const [match, setMatch] = useState(currentMatch);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     matchSubject.subscribe((newState) => {
       setMatch(newState);
     });

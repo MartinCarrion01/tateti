@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import { useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs";
 
 let currentToken: string | undefined;
@@ -7,9 +7,9 @@ let currentToken: string | undefined;
 const tokenSubject = new Subject<string | undefined>();
 
 export function useSessionToken() {
-  const [token, setToken] = React.useState(currentToken);
+  const [token, setToken] = useState(currentToken);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     tokenSubject.subscribe((newState) => {
       setToken(newState);
     });
@@ -25,6 +25,6 @@ export function setToken(token: string) {
 }
 
 export function cleanupToken() {
-  currentToken = undefined
-  tokenSubject.next(currentToken)
+  currentToken = undefined;
+  tokenSubject.next(currentToken);
 }

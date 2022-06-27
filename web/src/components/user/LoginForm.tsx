@@ -1,23 +1,23 @@
 import { Button, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AlertMessage from "../common/components/AlertMessage";
-import Form from "../common/components/Form";
-import InputText from "../common/components/InputText";
-import { register } from "./userService";
+import AlertMessage from "../common/AlertMessage";
+import Form from "../common/Form";
+import InputText from "../common/InputText";
+import { login } from "../../services/userService";
 
-export default function RegisterForm() {
+export default function LoginForm() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     try {
-      await register(username, password);
+      await login(username, password);
       navigate("/");
     } catch (error: any) {
-      setErrorMessage(JSON.stringify(error.response.data.message));
+      setErrorMessage(error.response.data.message);
     }
   };
 
@@ -45,10 +45,10 @@ export default function RegisterForm() {
         />
         <Button
           colorScheme={"teal"}
-          onClick={handleRegister}
+          onClick={handleLogin}
           disabled={username === "" || password === ""}
         >
-          Registrarse
+          Ingresar
         </Button>
       </Form>
     </>

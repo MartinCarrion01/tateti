@@ -71,5 +71,28 @@ export async function makeMove(match_number: Number, markedCell: String) {
     { celdamarcada: markedCell }
   );
 
-  return response
+  const match = response.data["match"] as Match;
+
+  setMatch(match);
+  return response;
+}
+
+export async function abandonMatch(match_number: Number) {
+  const response: AxiosResponse = await axios.put(
+    `${environment.server_url}/matches/${match_number}/abandon_match`
+  );
+  return response;
+}
+
+export async function getMatchByPlayer(player_id: string){
+  const response: AxiosResponse = await axios.get(
+    `${environment.server_url}/players/${player_id}/active_match`
+  );
+
+  if (response.data["match"]) {
+    const match = response.data["match"] as Match;
+    setMatch(match);
+  }
+
+  return response;
 }

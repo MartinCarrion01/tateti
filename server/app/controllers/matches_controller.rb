@@ -1,6 +1,6 @@
 class MatchesController < ApplicationController
-    before_action :set_player, only: [:create, :join, :make_move, :refresh]    
-    before_action :set_match, only: [:join, :make_move, :refresh]
+    before_action :set_match, only: [:join, :make_move, :refresh, :abandon_match]
+    before_action :set_player, only: [:create, :join, :make_move, :refresh, :abandon_match]    
     before_action :can_play?, only: [:make_move]    
     before_action :is_playing?, only: [:create, :join]
 
@@ -21,6 +21,13 @@ class MatchesController < ApplicationController
     end
 
     def refresh
+        if @match.status == "finalizado"
+            render(
+                status: 200,
+                json: {match: @match, refresh: false}
+            )
+            return
+        end
         if @match.player1 == @player
             if @match.status != "juegap1"
                 render(
@@ -74,9 +81,35 @@ class MatchesController < ApplicationController
         @match.make_move(@player, params[:celdamarcada])
         if @match.save
             render(
-                status: 204,
-                json: {message: ""}
+                status: 200,
+                json: {match: @match}
             )
+        else
+            render_match_errors
+        end
+    end
+
+    def abandon_match
+        if @match.status == "finalizado"
+            render(
+                status: 400,
+                json: {message: "La partida ya terminó"}
+            )
+            return
+        end
+        if @player == @match.player1
+            if !@match.player2.nil?
+                @match.winner = @match.player2
+                @match.player2.in_game = false
+            end
+        elsif @player == @match.player2
+            @match.winner = @match.player1
+            @match.player2.in_game = false
+        end
+        @match.player1.in_game = false
+        @match.status = "finalizado"
+        if @match.save
+            return
         else
             render_match_errors
         end
@@ -84,6 +117,17 @@ class MatchesController < ApplicationController
 
     private
     
+    def set_match
+        @match = Match.find_by(match_number: params[:id])
+        if @match.nil?
+            render(
+                status: 404,
+                json: {message: "El partido solicitado no existe"}
+            )
+            false
+        end
+    end
+
     def set_player
         if request.headers["Authorization"].nil?
             render(
@@ -102,22 +146,11 @@ class MatchesController < ApplicationController
         end
     end
 
-    def set_match
-        @match = Match.find_by(match_number: params[:id])
-        if @match.nil?
-            render(
-                status: 404,
-                json: {message: "El partido solicitado no existe"}
-            )
-            false
-        end
-    end
-
     def can_play?
         if (@match.status != "juegap1" && @match.status != "juegap2")
             render(
                 status: 400,
-                json: {mensaje: "No es posible realizar una jugada"}
+                json: {message: "No es posible realizar una jugada"}
             )
             return false
         end
@@ -147,14 +180,14 @@ class MatchesController < ApplicationController
     def render_match_errors
         render(
             status: 400,
-            json: {mensaje: @match.errors.details}
+            json: {message: @match.errors.details}
         )    
     end
 
     def render_player_errors
         render(
             status: 400,
-            json: {mensaje: @player.errors.details}
+            json: {message: @player.errors.details}
         )    
     end
 

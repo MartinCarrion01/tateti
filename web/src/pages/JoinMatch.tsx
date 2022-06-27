@@ -1,9 +1,23 @@
 import { Text } from "@chakra-ui/react";
-import HalfWidthCenter from "../common/components/HalfWidthCenter";
-import SubTitle from "../common/components/SubTitle";
-import JoinMatchForm from "../join_match/JoinMatchForm";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import HalfWidthCenter from "../components/common/HalfWidthCenter";
+import SubTitle from "../components/common/SubTitle";
+import JoinMatchForm from "../components/join_match/JoinMatchForm";
+import { useSessionToken } from "../store/tokenStore";
+import { useSessionUser } from "../store/userStore";
 
 export default function JoinMatch() {
+  const user = useSessionUser();
+  const navigate = useNavigate();
+  const token = useSessionToken();
+
+  useEffect(() => {
+    if (!user || !token) {
+      navigate("/login");
+    }
+  }, [user, token, navigate]);
+
   return (
     <>
       <HalfWidthCenter>

@@ -1,15 +1,15 @@
-import React from "react";
+import { useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs";
-import { Player } from "../user/userService";
+import { Player } from "../services/userService";
 
 let currentUser: Player | undefined;
 
 const userSubject = new Subject<Player | undefined>();
 
 export function useSessionUser() {
-  const [user, setUser] = React.useState(currentUser);
+  const [user, setUser] = useState(currentUser);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     userSubject.subscribe((newState) => {
       setUser(newState);
     });

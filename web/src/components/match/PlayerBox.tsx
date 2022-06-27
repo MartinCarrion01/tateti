@@ -1,5 +1,5 @@
 import { Box } from "@chakra-ui/react";
-import SubTitle from "../common/components/SubTitle";
+import SubTitle from "../common/SubTitle";
 
 interface Props {
   player_name: string | undefined;

@@ -1,9 +1,8 @@
 import { Square, Text, useToast } from "@chakra-ui/react";
-import { AxiosError } from "axios";
 import { useContext, useEffect, useState } from "react";
-import { RefreshContext } from "../pages/Match";
-import { useCurrentMatch } from "../store/matchStore";
-import { makeMove } from "./matchService";
+import { RefreshContext } from "../../pages/Match";
+import { useCurrentMatch } from "../../store/matchStore";
+import { makeMove } from "../../services/matchService";
 
 interface Props {
   cellId: String;
@@ -31,7 +30,6 @@ export default function BoardCell(props: Props) {
     if (match) {
       makeMove(match.match_number, id)
         .then((data) => {
-          console.log("todo ok");
           if (match.status === "juegap1") {
             setValue("X");
           } else if (match.status === "juegap2") {
@@ -40,10 +38,9 @@ export default function BoardCell(props: Props) {
           setState(!state)
         })
         .catch((error) => {
-          console.log(error)
           toast({
             title: "Ha ocurrido un error",
-            description: JSON.stringify((error as AxiosError).response?.data),
+            description: error.response.data.message ? error.response.data.message : "Ocurrió un error inesperado",
             status: "error",
             duration: 2000,
             isClosable: true,

@@ -1,6 +1,6 @@
-import HalfWidthCenter from "../common/components/HalfWidthCenter";
-import SubTitle from "../common/components/SubTitle";
-import RegisterForm from "../user/RegisterForm";
+import HalfWidthCenter from "../components/common/HalfWidthCenter";
+import SubTitle from "../components/common/SubTitle";
+import RegisterForm from "../components/user/RegisterForm";
 
 export default function Register() {
     return (

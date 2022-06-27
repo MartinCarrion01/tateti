@@ -1,10 +1,10 @@
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AlertMessage from "../common/components/AlertMessage";
-import Form from "../common/components/Form";
-import InputText from "../common/components/InputText";
-import { joinMatch, Match } from "../match/matchService";
+import AlertMessage from "../common/AlertMessage";
+import Form from "../common/Form";
+import InputText from "../common/InputText";
+import { joinMatch, Match } from "../../services/matchService";
 
 const numberRegex = /([0-9]{6})+/
 

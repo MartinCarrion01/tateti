@@ -30,7 +30,6 @@ export async function register(username: string, password: string) {
     `${environment.server_url}/players`,
     { username, password }
   );
-  console.log("res", response);
   const player = response.data["player"] as Player;
 
   setToken(player._id.$oid);

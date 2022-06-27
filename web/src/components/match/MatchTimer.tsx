@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useCurrentMatch } from "../store/matchStore";
-import { updateMatch } from "./matchService";
+import { useCurrentMatch } from "../../store/matchStore";
+import { updateMatch } from "../../services/matchService";
 
 interface Props {
   setter: React.Dispatch<React.SetStateAction<boolean>>;

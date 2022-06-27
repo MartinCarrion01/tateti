@@ -1,5 +1,6 @@
 class PlayersController < ApplicationController
-    before_action :set_player, only: :show
+    before_action :set_player, only: [:show, :active_match]
+
     def create 
         @player = Player.new(player_params)
         if @player.save
@@ -17,6 +18,28 @@ class PlayersController < ApplicationController
             json: {player: @player},
             status: 200
         )
+    end
+
+    def active_match
+        if !@player.in_game
+            render(
+                status: 400,
+                json: {message: "No se encuentra en partida actualmente"}
+            )
+            return
+        end
+        results = Match.where(player1: @player).or(player2: @player).and.not(status: "finalizado").to_a
+        if results.length == 0
+            render(
+                json: {match: nil},
+                status: 200
+            )
+        else
+            render(
+                json: {match: results[0]},
+                status: 200
+            )
+        end
     end
 
     def login

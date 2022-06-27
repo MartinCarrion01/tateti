@@ -7,6 +7,9 @@ Rails.application.routes.draw do
     collection do
       post :login
     end
+    member do
+      get :active_match
+    end
   end
 
   resources :matches, only: :create do
@@ -15,6 +18,8 @@ Rails.application.routes.draw do
       patch :join
       put :make_move
       patch :make_move
+      put :abandon_match
+      patch :abandon_match
       get :refresh
     end
   end
@@ -23,5 +28,5 @@ Rails.application.routes.draw do
   #post '/matches/join/:match_number', to: 'matches#join'
   #post '/matches/start/:match_number', to: 'matches#start'
   #post '/matches/makemove/:match_number', to: 'matches#make_move'
-  #get '/matches/refresh/:match_number', to: 'matches#refresh'
+  #get '/players/:id/active_match', to: 'players#active_match'
 end

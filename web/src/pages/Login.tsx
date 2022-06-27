@@ -1,7 +1,7 @@
-import HalfWidthCenter from "../common/components/HalfWidthCenter";
-import SubTitle from "../common/components/SubTitle";
-import LoginForm from "../user/LoginForm";
-import RegisterPrompt from "../user/RegisterPrompt";
+import HalfWidthCenter from "../components/common/HalfWidthCenter";
+import SubTitle from "../components/common/SubTitle";
+import LoginForm from "../components/user/LoginForm";
+import RegisterPrompt from "../components/user/RegisterPrompt";
 
 export default function Login() {
   return (

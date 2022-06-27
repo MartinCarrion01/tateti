@@ -2,7 +2,6 @@ class Match
     include Mongoid::Document
 
     field :match_number, type: Integer
-    field :is_active, type: Boolean, default: true
     field :status, type: String, default: "esperando"
     field :player1_cells, type: Array, default: []
     field :player2_cells, type: Array, default: []
@@ -22,13 +21,11 @@ class Match
         if cells.length >= 3 && did_player_win(cells)
             self.winner = player
             self.status = "finalizado"
-            self.is_active = false
             self.player1.in_game = false
             self.player2.in_game = false
         else
             if self.player1_cells.length + self.player1_cells.length >= 9
-                self.status = "empatado"
-                self.is_active = false
+                self.status = "finalizado"
                 self.player1.in_game = false
                 self.player2.in_game = false
                 return
