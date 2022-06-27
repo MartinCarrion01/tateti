@@ -3,6 +3,36 @@
 
 Código del servidor del juego donde está contenida la implementación de la lógica del negocio del problema.
 
+# ¿Como instalar y usar?
+
+Primero tenemos que clonar este proyecto en nuestra computadora.
+Luego, en la línea de comandos, en la raiz del proyecto ejecutar los siguientes comandos
+
+```
+bundle install
+rails server
+```
+
+## Dependencias
+
+Tenemos que tener las siguientes dependencias para que el proyecto funcione correctamente
+
+### Ruby
+
+Versión 3.0.1 o mayor
+
+### Mongo DB
+
+Este proyecto usa MongoDB para guardar datos, además de que usamos Mongoid como ORM. 
+Cabe destacar que nuestra aplicación va a revisar el puerto 5000 para conectar con la base de datos
+
+Podemos usar Docker para correr Mongo
+
+```
+docker container run -d -p 5000:27017 --name tateti mongo
+```
+O seguir las guías de instalación de mongo desde el sitio oficial: mongodb.com
+
 # Índice de endpoints
 
 ## Cosas a tener en cuenta
