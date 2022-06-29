@@ -24,7 +24,7 @@ class Match
             self.player1.in_game = false
             self.player2.in_game = false
         else
-            if self.player1_cells.length + self.player2_cells.length >= 8
+            if self.player1_cells.length + self.player2_cells.length >= 9
                 self.status = "finalizado"
                 self.player1.in_game = false
                 self.player2.in_game = false
