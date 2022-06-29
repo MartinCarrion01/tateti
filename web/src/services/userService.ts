@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { setToken } from "../store/tokenStore";
 import { setUser } from "../store/userStore";
 import { environment } from "../utils/environment";
 
@@ -19,8 +18,8 @@ export async function login(username: string, password: string) {
   );
 
   const player = response.data["player"] as Player;
-
-  setToken(player._id.$oid);
+  
+  axios.defaults.headers.common["Authorization"] = "Bearer " + player._id.$oid;
   setUser(player);
   return response;
 }
@@ -32,7 +31,7 @@ export async function register(username: string, password: string) {
   );
   const player = response.data["player"] as Player;
 
-  setToken(player._id.$oid);
+  axios.defaults.headers.common["Authorization"] = "Bearer " + player._id.$oid;
   setUser(player);
   return response;
 }

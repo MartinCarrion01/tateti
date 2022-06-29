@@ -2,19 +2,17 @@ import { Box, Heading, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HalfWidthCenter from "../components/common/HalfWidthCenter";
-import { useSessionToken } from "../store/tokenStore";
 import { useSessionUser } from "../store/userStore";
 
 export default function WrongRoute() {
   const user = useSessionUser();
   const navigate = useNavigate();
-  const token = useSessionToken();
 
   useEffect(() => {
-    if (!user || !token) {
+    if (!user) {
       navigate("/login");
     }
-  }, [user, token, navigate]);
+  }, [user, navigate]);
 
   return (
     <HalfWidthCenter>

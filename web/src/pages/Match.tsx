@@ -9,7 +9,6 @@ import LeaveButton from "../components/match/LeaveButton";
 import MatchTimer from "../components/match/MatchTimer";
 import PlayerBoard from "../components/match/PlayerBoard";
 import { useCurrentMatch } from "../store/matchStore";
-import { useSessionToken } from "../store/tokenStore";
 import { useSessionUser } from "../store/userStore";
 
 const refreshContextDefaultValue = {
@@ -23,16 +22,15 @@ export default function Match() {
   const match = useCurrentMatch();
   const user = useSessionUser();
   const navigate = useNavigate();
-  const token = useSessionToken();
   const [refresh, setRefresh] = useState<boolean>(
     refreshContextDefaultValue.state
   );
 
   useEffect(() => {
-    if (!user || !token) {
+    if (!user) {
       navigate("/login");
     }
-  }, [user, token, navigate]);
+  }, [user, navigate]);
 
   if (!match && !user) {
     return <></>;

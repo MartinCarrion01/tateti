@@ -4,26 +4,23 @@ import AlertMessage from "../components/common/AlertMessage";
 import ButtonList, { ButtonFormat } from "../components/menu/ButtonList";
 import HalfWidthCenter from "../components/common/HalfWidthCenter";
 import { Match, createMatch, getMatchByPlayer } from "../services/matchService";
-import { cleanupToken, useSessionToken } from "../store/tokenStore";
 import { cleanupUser, useSessionUser } from "../store/userStore";
 
 export default function Menu(props: any) {
   const user = useSessionUser();
   const navigate = useNavigate();
-  const token = useSessionToken();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [disabled, setDisabled] = useState<boolean>(false);
 
   
   useEffect(() => {
-    if (!user || !token) {
+    if (!user) {
       navigate("/login");
     }
-  }, [user, token, navigate]);
+  }, [user, navigate]);
 
   const logoutHandler = () => {
     cleanupUser();
-    cleanupToken();
   };
 
   const createMatchHandler = async () => {
